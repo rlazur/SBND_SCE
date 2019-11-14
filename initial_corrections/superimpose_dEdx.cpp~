@@ -1,0 +1,310 @@
+//some standard C++ includes
+#include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <vector>
+#include <chrono>
+#include <cmath>
+#include <iterator>
+#include <algorithm>
+#include <fstream>
+
+//some ROOT includes
+#include "TInterpreter.h"
+#include "TROOT.h"
+#include "TH1F.h"
+#include "TH2F.h"
+#include "TFile.h"
+#include "TMath.h"
+#include "TTree.h"
+#include "TBranch.h"
+#include "TStyle.h"
+#include "TCanvas.h"
+#include "TLegend.h"
+
+using namespace std;
+
+int main(){
+      cout<<"starting..."<<endl;
+      TFile *f = new TFile("cosmicsamples_dedxcomp.root");
+      TFile f_output("output.root","RECREATE");
+
+      //grab histograms
+      // TH1F *dQdx = (TH1F*)f->Get("h1dEdx");
+      // TH1F *dQdx_sce = (TH1F*)f->Get("h1dEdx_sce");
+      // TH1F *dQdx_sce_corr = (TH1F*)f->Get("h1dEdx_sce_corr");
+      // TH1F *dQdx_sce_corrE = (TH1F*)f->Get("h1dEdx_sce_corrE");
+      // TH1F *dQdx_sce_corrspat = (TH1F*)f->Get("h1dEdx_sce_corrspat");
+      // TH1F *dQdx_noel = (TH1F*)f->Get("h1dEdx_noel");
+      // TH1F *dQdx_sce_noel = (TH1F*)f->Get("h1dEdx_sce_noel");
+      // TH1F *dQdx_sce_corr_noel = (TH1F*)f->Get("h1dEdx_sce_corr_noel");
+
+      TH1F *dEdx = (TH1F*)f->Get("h1calodEdx");
+      TH1F *dEdx_invel = (TH1F*)f->Get("h1calodEdx_invel");
+      TH1F *dEdx_inverel = (TH1F*)f->Get("h1calodEdx_inverel");
+      TH1F *dEdx_noel = (TH1F*)f->Get("h1calodEdx_noel");
+      TH1F *dEdx_sce = (TH1F*)f->Get("h1calodEdx_sce");
+      TH1F *dEdx_sce_invel = (TH1F*)f->Get("h1calodEdx_sce_invel");
+      TH1F *dEdx_sce_corr = (TH1F*)f->Get("h1calodEdx_sce_corr");
+      TH1F *dEdx_sce_corr_invel = (TH1F*)f->Get("h1calodEdx_sce_corr_invel");
+      TH1F *dEdx_sce_corr_noel = (TH1F*)f->Get("h1calodEdx_sce_corr_noel");
+
+      TH1F *dEdx_x = (TH1F*)f->Get("h1dEdx_x");
+      TH1F *dEdx_invel_x = (TH1F*)f->Get("h1dEdx_invel_x");
+      TH1F *dEdx_noel_x = (TH1F*)f->Get("h1dEdx_noel_x");
+      TH1F *dEdx_inverel_x = (TH1F*)f->Get("h1dEdx_inverel_x");
+      TH1F *dEdx_sce_x = (TH1F*)f->Get("h1dEdx_sce_x");
+      TH1F *dEdx_sce_corr_x = (TH1F*)f->Get("h1dEdx_sce_corr_x");
+      TH1F *dEdx_sce_noel_x = (TH1F*)f->Get("h1dEdx_sce_noel_x");
+
+      TH1F *dEdx_y = (TH1F*)f->Get("h1dEdx_y");
+      TH1F *dEdx_noel_y = (TH1F*)f->Get("h1dEdx_noel_y");
+      TH1F *dEdx_sce_y = (TH1F*)f->Get("h1dEdx_sce_y");
+      TH1F *dEdx_sce_corr_y = (TH1F*)f->Get("h1dEdx_sce_corr_y");
+      TH1F *dEdx_sce_noel_y = (TH1F*)f->Get("h1dEdx_sce_noel_y");
+
+      TH1F *dEdx_z = (TH1F*)f->Get("h1dEdx_z");
+      TH1F *dEdx_noel_z = (TH1F*)f->Get("h1dEdx_noel_z");
+      TH1F *dEdx_sce_z = (TH1F*)f->Get("h1dEdx_sce_z");
+      TH1F *dEdx_sce_corr_z = (TH1F*)f->Get("h1dEdx_sce_corr_z");
+      TH1F *dEdx_sce_noel_z = (TH1F*)f->Get("h1dEdx_sce_noel_z");
+
+
+      TCanvas *cdEdx = new TCanvas("cdEdx","Corrections to calo dEdx vals",600,400);
+      dEdx->Draw();
+      dEdx->SetLineWidth(2);
+      dEdx->SetLineColor(kBlack);
+      dEdx->GetXaxis()->SetTitle("dEdx");
+      dEdx_sce->Draw("same");
+      dEdx_sce->SetLineColor(kPink+7);
+      dEdx_sce->SetLineWidth(2);
+      dEdx_sce_corr_invel->Draw("same");
+      dEdx_sce_corr_invel->SetLineColor(kAzure);
+      dEdx_sce_corr_invel->SetLineWidth(2);
+      // dEdx_sce_corr_noel->Draw("same");
+      // dEdx_sce_corr_noel->SetLineColor(kOrange);
+      // dEdx_sce_corr_noel->SetLineWidth(2);
+      dEdx_sce_corr->Draw("same");
+      dEdx_sce_corr->SetLineColor(kGreen);
+      dEdx_sce_corr->SetLineWidth(2);
+      auto ldEdx = new TLegend(0.8,1.0,0.8,1.0);
+      ldEdx->AddEntry(dEdx,"No SCE","l");
+      ldEdx->AddEntry(dEdx_sce,"SCE, No Corrections","l");
+      ldEdx->AddEntry(dEdx_sce_corr,"SCE, All Corrections","l");
+      ldEdx->AddEntry(dEdx_sce_corr_invel,"SCE, inverted e-lifetime","l");
+      // ldEdx->AddEntry(dEdx_sce_corr_noel,"SCE, No e-lifetime corr", "l");
+      ldEdx->Draw();
+      cdEdx->Write();
+
+      TCanvas *cdEdx_nosce = new TCanvas("cdEdx_nosce","Study of e-lifetime effects",600,400);
+      dEdx_noel->Draw();
+      dEdx_noel->SetLineWidth(2);
+      dEdx_noel->SetLineColor(kBlack);
+      dEdx_noel->GetXaxis()->SetTitle("dEdx");
+      dEdx_noel->SetTitle("No SCE");
+      dEdx->Draw("same");
+      dEdx->SetLineWidth(2);
+      dEdx->SetLineColor(kBlue);
+      dEdx_invel->Draw("same");
+      dEdx_invel->SetLineWidth(2);
+      dEdx_invel->SetLineColor(kGreen);
+      auto ldEdx_nosce = new TLegend(0.8,1.0,0.8,1.0);
+      ldEdx_nosce->AddEntry(dEdx_noel,"No e-lifetime corr","l");
+      ldEdx_nosce->AddEntry(dEdx,"standard e-lifetime corr","l");
+      ldEdx_nosce->AddEntry(dEdx_invel,"inverted e-lifetime corr","l");
+      // ldEdx->AddEntry(dEdx_sce_corr_noel,"SCE, No e-lifetime corr", "l");
+      ldEdx_nosce->Draw();
+      cdEdx_nosce->Write();
+
+      TCanvas *cdEdx_corr = new TCanvas("dedx_corr","SCE corrections to dEdx");
+      dEdx_invel->Draw();
+      dEdx_invel->SetLineWidth(2);
+      dEdx_invel->SetLineColor(kBlack);
+      dEdx_invel->SetTitle("dEdx");
+      dEdx_sce_invel->Draw("same");
+      dEdx_sce_invel->SetLineWidth(2);
+      dEdx_sce_invel->SetLineColor(kRed);
+      dEdx_sce_corr_invel->Draw("same");
+      dEdx_sce_corr_invel->SetLineWidth(2);
+      dEdx_sce_corr_invel->SetLineColor(kGreen);
+      dEdx_noel->Draw("same");
+      dEdx_noel->SetLineWidth(2);
+      dEdx_noel->SetLineColor(kBlack);
+      dEdx_sce->Draw("same");
+      dEdx_sce->SetLineWidth(2);
+      dEdx_sce->SetLineColor(kRed);
+      dEdx_sce_corr_noel->Draw("same");
+      dEdx_sce_corr_noel->SetLineWidth(2);
+      dEdx_sce_corr_noel->SetLineColor(kGreen);
+      auto ldEdx_corr = new TLegend(0.8,1.0,0.8,1.0);
+      ldEdx_corr->AddEntry(dEdx_invel,"No SCE","l");
+      ldEdx_corr->AddEntry(dEdx_sce_invel,"SCE, no SCE corrections","l");
+      ldEdx_corr->AddEntry(dEdx_sce_corr_invel,"SCE, SCE corrections","l");
+      // ldEdx->AddEntry(dEdx_sce_corr_noel,"SCE, No e-lifetime corr", "l");
+      ldEdx_corr->Draw();
+      cdEdx_corr->Write();
+
+      TCanvas *cdedx_x_corr = new TCanvas("dedx_x_corr","dedx as a function of x",600,400);
+      dEdx_noel_x->Draw();
+      dEdx_noel_x->SetLineWidth(2);
+      dEdx_noel_x->SetLineColor(kBlack);
+      dEdx_noel_x->SetTitle("dEdx(x)");
+      dEdx_sce_x->Draw("same");
+      dEdx_sce_x->SetLineWidth(2);
+      dEdx_sce_x->SetLineColor(kBlue);
+      dEdx_sce_noel_x->Draw("same");
+      dEdx_sce_noel_x->SetLineWidth(2);
+      dEdx_sce_noel_x->SetLineColor(kGreen);
+      auto ldEdx_x_corr = new TLegend(0.8,1.0,0.8,1.0);
+      ldEdx_x_corr->AddEntry(dEdx_x,"No SCE, no e-lifetime","l");
+      ldEdx_x_corr->AddEntry(dEdx_sce_x,"SCE, no SCE corrections","l");
+      ldEdx_x_corr->AddEntry(dEdx_sce_noel_x,"SCE, SCE corrections","l");
+      // ldEdx->AddEntry(dEdx_sce_corr_noel,"SCE, No e-lifetime corr", "l");
+      ldEdx_x_corr->Draw();
+      cdedx_x_corr->Write();
+
+      TCanvas *cdedx_y_corr = new TCanvas("dedx_y_corr","dedx as a function of x",600,400);
+      dEdx_noel_y->Draw();
+      dEdx_noel_y->SetLineWidth(2);
+      dEdx_noel_y->SetLineColor(kBlack);
+      dEdx_noel_x->SetTitle("dEdx(y)");
+      dEdx_sce_y->Draw("same");
+      dEdx_sce_y->SetLineWidth(2);
+      dEdx_sce_y->SetLineColor(kBlue);
+      dEdx_sce_noel_y->Draw("same");
+      dEdx_sce_noel_y->SetLineWidth(2);
+      dEdx_sce_noel_y->SetLineColor(kGreen);
+      auto ldEdx_y_corr = new TLegend(0.8,1.0,0.8,1.0);
+      ldEdx_y_corr->AddEntry(dEdx_y,"No SCE, no e-lifetime","l");
+      ldEdx_y_corr->AddEntry(dEdx_sce_y,"SCE, no SCE corrections","l");
+      ldEdx_y_corr->AddEntry(dEdx_sce_noel_y,"SCE, SCE corrections","l");
+      // ldEdx->AddEntry(dEdx_sce_corr_noel,"SCE, No e-lifetime corr", "l");
+      ldEdx_y_corr->Draw();
+      cdedx_y_corr->Write();
+
+      TCanvas *cdedx_z_corr = new TCanvas("dedx_z_corr","dedx as a function of x",600,400);
+      dEdx_noel_z->Draw();
+      dEdx_noel_z->SetLineWidth(2);
+      dEdx_noel_z->SetLineColor(kBlack);
+      dEdx_noel_x->SetTitle("dEdx(z)");
+      dEdx_sce_z->Draw("same");
+      dEdx_sce_z->SetLineWidth(2);
+      dEdx_sce_z->SetLineColor(kBlue);
+      dEdx_sce_noel_z->Draw("same");
+      dEdx_sce_noel_z->SetLineWidth(2);
+      dEdx_sce_noel_z->SetLineColor(kGreen);
+      auto ldEdx_z_corr = new TLegend(0.8,1.0,0.8,1.0);
+      ldEdx_z_corr->AddEntry(dEdx_z,"No SCE, no e-lifetime","l");
+      ldEdx_z_corr->AddEntry(dEdx_sce_z,"SCE, no SCE corrections","l");
+      ldEdx_z_corr->AddEntry(dEdx_sce_noel_z,"SCE, SCE corrections","l");
+      // ldEdx->AddEntry(dEdx_sce_corr_noel,"SCE, No e-lifetime corr", "l");
+      ldEdx_z_corr->Draw();
+      cdedx_z_corr->Write();
+
+      TCanvas *cdedx_x_elstudy = new TCanvas("dedx_x","dedx as a function of x",600,400);
+      dEdx_noel_x->Draw();
+      dEdx_noel_x->SetLineWidth(2);
+      dEdx_noel_x->SetLineColor(kBlack);
+      dEdx_noel_x->SetTitle("No SCE");
+      dEdx_noel_x->GetXaxis()->SetTitle("x[cm]");
+      dEdx_x->Draw("same");
+      dEdx_x->SetLineWidth(2);
+      dEdx_x->SetLineColor(kBlue);
+      dEdx_invel_x->Draw("same");
+      dEdx_invel_x->SetLineWidth(2);
+      dEdx_invel_x->SetLineColor(kRed);
+      dEdx_inverel_x->Draw("same");
+      dEdx_inverel_x->SetLineWidth(2);
+      dEdx_inverel_x->SetLineColor(kGreen);
+      auto ldedx_x_elstudy = new TLegend(1,1,1,1);
+      ldedx_x_elstudy->AddEntry(dEdx_noel_x,"no e-lifetime", "l");
+      ldedx_x_elstudy->AddEntry(dEdx_x,"standard e-lifetime", "l");
+      ldedx_x_elstudy->AddEntry(dEdx_invel_x,"inverted e-lifetime", "l");
+      ldedx_x_elstudy->AddEntry(dEdx_inverel_x,"e-lifetime from cathode", "l");
+      ldedx_x_elstudy->Draw();
+      cdedx_x_elstudy->Write();
+
+      // TCanvas *cdQdx_corr = new TCanvas("cdQdx_corr","corrections to the calo dqdx values",600,400);
+      // dQdx->Draw();
+      // dQdx->SetLineWidth(2);
+      // dQdx->SetLineColor(kBlack);
+      // dQdx->GetXaxis()->SetRangeUser(0,5000);
+      // dQdx_sce->Draw("same");
+      // dQdx_sce->SetLineColor(kRed);
+      // dQdx_sce->SetLineWidth(2);
+      // dQdx_sce->GetXaxis()->SetRangeUser(0,5000);
+      // dQdx_sce_corr->Draw("same");
+      // dQdx_sce_corr->SetLineColor(kBlue);
+      // dQdx_sce_corr->SetLineWidth(2);
+      // dQdx_sce_corr->GetXaxis()->SetRangeUser(0,5000);
+      // dQdx_sce_corrE->Draw("same");
+      // dQdx_sce_corrE->SetLineColor(kGreen);
+      // dQdx_sce_corrE->SetLineWidth(2);
+      // dQdx_sce_corrE->GetXaxis()->SetRangeUser(0,5000);
+      // dQdx_sce_corrspat->Draw("same");
+      // dQdx_sce_corrspat->SetLineColor(kPink+7);
+      // dQdx_sce_corrspat->SetLineWidth(2);
+      // dQdx_sce_corrspat->GetXaxis()->SetRangeUser(0,5000);
+      // auto ldQdx_corr = new TLegend(0.8,1.0,0.8,1.0);
+      // ldQdx_corr->AddEntry(dQdx,"No SCE","l");
+      // ldQdx_corr->AddEntry(dQdx_sce,"SCE, No Corrections","l");
+      // ldQdx_corr->AddEntry(dQdx_sce_corrE,"SCE, Just Energy Corrections","l");
+      // ldQdx_corr->AddEntry(dQdx_sce_corrspat,"SCE, Just Spatial Corrections","l");
+      // ldQdx_corr->AddEntry(dQdx_sce_corr,"SCE, All Corrections","l");
+      // ldQdx_corr->Draw();
+      // cdQdx_corr->Write();
+
+      // TCanvas *cdQdx_corr_noel = new TCanvas("cdQdx_corr_noel","e-lifetime effects",600,400);
+      // dQdx->Draw();
+      // dQdx->SetLineWidth(2);
+      // dQdx->SetLineColor(kBlack);
+      // dQdx->GetXaxis()->SetRangeUser(0,5000);
+      // dQdx_sce->Draw("same");
+      // dQdx_sce->SetLineColor(kRed);
+      // dQdx_sce->SetLineWidth(2);
+      // dQdx_sce->GetXaxis()->SetRangeUser(0,5000);
+      // dQdx_noel->Draw("same");
+      // dQdx_noel->SetLineColor(kBlue);
+      // dQdx_noel->SetLineWidth(2);
+      // dQdx_noel->GetXaxis()->SetRangeUser(0,5000);
+      // dQdx_sce_noel->Draw("same");
+      // dQdx_sce_noel->SetLineColor(kGreen);
+      // dQdx_sce_noel->SetLineWidth(2);
+      // dQdx_sce_noel->GetXaxis()->SetRangeUser(0,5000);
+      // dQdx_sce_corr_noel->Draw("same");
+      // dQdx_sce_corr_noel->SetLineColor(kPink+7);
+      // dQdx_sce_corr_noel->SetLineWidth(2);
+      // dQdx_sce_corr_noel->GetXaxis()->SetRangeUser(0,5000);
+      // ldQdx_corr = new TLegend(0.8,1.0,0.8,1.0);
+      // ldQdx_corr->AddEntry(dQdx,"No SCE","l");
+      // ldQdx_corr->AddEntry(dQdx_sce,"SCE, No Corrections","l");
+      // ldQdx_corr->AddEntry(dQdx_noel,"No SCE, no e-lifetime","l");
+      // ldQdx_corr->AddEntry(dQdx_sce_noel,"SCE, no e-lifetime","l");
+      // ldQdx_corr->AddEntry(dQdx_sce_corr_noel,"SCE, All Corrections no e-lifetime","l");
+      // ldQdx_corr->Draw();
+      // cdQdx_corr_noel->Write();
+
+      // TCanvas *cratio = new TCanvas("cratio","pitch calculation comparison",600,400);
+      // TH1F *ratio = (TH1F*)f->Get("h1pitchratio");
+      // TH1F *ratio_sce = (TH1F*)f->Get("h1pitchratio_sce");
+      // TH1F *ratio_sceb = (TH1F*)f->Get("h1pitchratio_sceb");
+      // ratio->Draw();
+      // ratio->SetLineWidth(2);
+      // ratio->SetLineColor(kBlack);
+      // ratio_sce->Draw("same");
+      // ratio_sce->SetLineColor(kRed);
+      // ratio_sce->SetLineWidth(2);
+      // ratio_sceb->Draw("same");
+      // ratio_sceb->SetLineColor(kBlue);
+      // ratio_sceb->SetLineWidth(2);
+      // auto lratio = new TLegend(0.8,1.0,0.8,1.0);
+      // lratio->AddEntry(ratio,"pitch_calc/pitch_calo","l");
+      // lratio->AddEntry(ratio_sce,"pitch_calc/pitch_calo w SCE","l");
+      // lratio->AddEntry(ratio_sceb,"pitch_calc/pitch_calo w SCE, 11 method","l");
+      // lratio->Draw();
+      // cratio->Write();
+
+      f_output.Write();
+      f_output.Close();
+      cout<<"...done"<<endl;
+}

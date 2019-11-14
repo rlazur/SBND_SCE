@@ -1,0 +1,6 @@
+the main thing about the cosmicsamples_wmanyspat.root file is that it shows the effect of different types of dx correction. I calculated dx 3 different ways:
+spat: dx = dist(xyz(i+1)-xyz(i))
+spatb: dx = dist(xyz(i+1)-xyz(i-1))/2
+spat2: dx = dist(xyz[i+2]-xyz[i])/2
+
+
